@@ -1,11 +1,14 @@
-import React, { useState } from "react";
+import React, {useState } from "react";
 import AddTaskInput from '../AddTaskInput/AddTaskInput';
 import ButtonSubmit from '../ButtonSubmit/ButtonSubmit';
 import axios from "axios";
-
-const AddTaskForm: React.FC = (props) => {
+interface AddTaskFormpProps {
+    change():void
+}
+const AddTaskForm: React.FC<AddTaskFormpProps> = ({change}) => {
     const [taskValue,setTaskValue] = useState<string>("");
 
+  
     const handlerChange = (event:React.ChangeEvent<HTMLInputElement>) => {
         setTaskValue(event.target.value)
     }
@@ -26,6 +29,10 @@ const AddTaskForm: React.FC = (props) => {
                     title:taskValue
                 }
             })
+            .then(()=>{
+                change()
+            })
+           
         }
         else {
             alert("empty value")
