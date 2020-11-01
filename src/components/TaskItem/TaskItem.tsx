@@ -2,13 +2,14 @@ import React from "react";
 import ButtonSubmit from '../ButtonSubmit/ButtonSubmit';
 
 interface TaskItemProps {
-    title:string
+    title:string,
+    remove(id:string):void
 }
-const TaskItem: React.FC<TaskItemProps> = ({title}) => {
+const TaskItem: React.FC<TaskItemProps> = ({title,remove}) => {
     return (
         <>
             <input value={title}/>
-            <ButtonSubmit clicked={()=>console.log("test")}/>
+            <ButtonSubmit clicked={remove}/>
         </>
     )
 }

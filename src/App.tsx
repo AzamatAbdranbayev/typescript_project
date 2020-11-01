@@ -2,7 +2,7 @@ import React,{useState,useEffect} from 'react';
 import AddTaskForm from './components/AddTaskForm/AddTaskForm';
 import axios from "axios";
 import ToDoList from './components/ToDoList/ToDoList';
-
+import withErrorHandler from './hoc/withErrorHandler/withErrorHandler'
 const App: React.FC = () => {
   const [taskList,setTaskList] = useState<any []>([]);
   const [variableForUpdateUseEffect,setVariableForUpdateUseEffect] = useState<number>(0);
@@ -28,15 +28,21 @@ const App: React.FC = () => {
         }))
     })
     .then(response=>{
-        setTaskList(response)
+      setTaskList(response)
     })
 },[variableForUpdateUseEffect])
+const handlerRemoveTask = (id:string)=> {
+  axios({
+    method:"DELETE",
+    url:`https://todo-ps-b0113.firebaseio.com/task/${id}.json`
+  })
+}
   return (
     <>
      <AddTaskForm change={handlerChangeVariableForUpdateUseEffect}></AddTaskForm>
-     <ToDoList taskList={taskList}/>
+     <ToDoList taskList={taskList} remove={handlerRemoveTask}/>
     </>
   )
 } 
 
-export default App;
+export default withErrorHandler(App,axios);

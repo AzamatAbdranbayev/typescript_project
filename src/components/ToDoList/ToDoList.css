@@ -1,0 +1,9 @@
+.todo__wrapper {
+    display: flex;
+    flex-direction: column;
+    max-width: 500px;
+}
+.todo__wrapper >button {
+    width: 100px;
+    margin: 15px 0;
+}
