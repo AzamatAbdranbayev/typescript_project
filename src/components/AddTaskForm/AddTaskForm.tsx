@@ -26,7 +26,8 @@ const AddTaskForm: React.FC<AddTaskFormpProps> = ({change}) => {
                 url:"https://todo-ps-b0113.firebaseio.com/task.json",
                 data:{
                     id:"0",
-                    title:taskValue
+                    title:taskValue,
+                    completed:false
                 }
             })
             .then(()=>{

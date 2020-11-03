@@ -6,41 +6,72 @@ import withErrorHandler from './hoc/withErrorHandler/withErrorHandler'
 const App: React.FC = () => {
   const [taskList,setTaskList] = useState<any []>([]);
   const [variableForUpdateUseEffect,setVariableForUpdateUseEffect] = useState<number>(0);
+  const [valueChangedTask,setValueChangedTask] = useState<string>("")
 
   const handlerChangeVariableForUpdateUseEffect = () => {
     setVariableForUpdateUseEffect(variableForUpdateUseEffect+1);
   }
   useEffect(()=>{
     axios({
-        method:"GET",
-        url:"https://todo-ps-b0113.firebaseio.com/task.json"
+      method:"GET",
+      url:"https://todo-ps-b0113.firebaseio.com/task.json"
     })
     .then(response=>{
-        return Promise.all(Object.keys(response.data).map(taskId=>{
-            return axios({
-                method:"GET",
-                url:`https://todo-ps-b0113.firebaseio.com/task/${taskId}.json`
-            })
-            .then(response=>{
-                response.data.id = taskId;
-                return response.data;
-            })
-        }))
+      return Promise.all(Object.keys(response.data).map(taskId=>{
+        return axios({
+          method:"GET",
+          url:`https://todo-ps-b0113.firebaseio.com/task/${taskId}.json`
+        })
+        .then(response=>{
+          response.data.id = taskId;
+          return response.data;
+        })
+      }))
     })
     .then(response=>{
       setTaskList(response)
     })
-},[variableForUpdateUseEffect])
-const handlerRemoveTask = (id:string)=> {
-  axios({
-    method:"DELETE",
-    url:`https://todo-ps-b0113.firebaseio.com/task/${id}.json`
-  })
-}
+  },[variableForUpdateUseEffect])
+
+  const handlerRemoveTask = (id:string)=> {
+    axios({
+      method:"DELETE",
+      url:`https://todo-ps-b0113.firebaseio.com/task/${id}.json`
+    })
+    .then(()=>{
+      handlerChangeVariableForUpdateUseEffect()
+    })
+  }
+  const handlerChangedTask = (event:React.ChangeEvent<HTMLInputElement>,id:string) => {
+    setValueChangedTask(event.target.value)
+    const index = taskList.findIndex(elem=>elem.id === id)
+    const newTask = {
+      id:id,
+      title:event.target.value,
+      completed:false
+    }
+    const taskListCopy = taskList
+    taskListCopy[index] = newTask
+    setTaskList(taskListCopy)
+  }
+  const handlerUpdateTask = (id:string)=>{
+    if(valueChangedTask === "") {
+      alert("ups epmty")
+      return
+    }
+    axios({
+      method:"PUT",
+      url:`https://todo-ps-b0113.firebaseio.com/task/${id}.json`,
+      data:taskList[taskList.findIndex(elem=>elem.id === id)]
+    })
+    .then(()=>{
+      handlerChangeVariableForUpdateUseEffect()
+    })
+  }
   return (
     <>
      <AddTaskForm change={handlerChangeVariableForUpdateUseEffect}></AddTaskForm>
-     <ToDoList taskList={taskList} remove={handlerRemoveTask}/>
+     <ToDoList taskList={taskList} remove={handlerRemoveTask} change={handlerChangedTask} updateTask={handlerUpdateTask}/>
     </>
   )
 } 
