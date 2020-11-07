@@ -3,10 +3,12 @@ import AddTaskForm from './components/AddTaskForm/AddTaskForm';
 import axios from "axios";
 import ToDoList from './components/ToDoList/ToDoList';
 import withErrorHandler from './hoc/withErrorHandler/withErrorHandler'
+import { Alert } from 'antd';
 const App: React.FC = () => {
   const [taskList,setTaskList] = useState<any []>([]);
   const [variableForUpdateUseEffect,setVariableForUpdateUseEffect] = useState<number>(0);
   const [valueChangedTask,setValueChangedTask] = useState<string>("")
+  const [visible,setVisible] = useState<boolean>(false);
 
   const handlerChangeVariableForUpdateUseEffect = () => {
     setVariableForUpdateUseEffect(variableForUpdateUseEffect+1);
@@ -42,7 +44,7 @@ const App: React.FC = () => {
       handlerChangeVariableForUpdateUseEffect()
     })
   }
-  const handlerChangedTask = (event:React.ChangeEvent<HTMLInputElement>,id:string) => {
+  const handlerChangedTask = (event:React.ChangeEvent<HTMLTextAreaElement>,id:string) => {
     setValueChangedTask(event.target.value)
     const index = taskList.findIndex(elem=>elem.id === id)
     const newTask = {
@@ -56,7 +58,7 @@ const App: React.FC = () => {
   }
   const handlerUpdateTask = (id:string)=>{
     if(valueChangedTask === "") {
-      alert("ups epmty")
+      setVisible(true)
       return
     }
     axios({
@@ -70,6 +72,7 @@ const App: React.FC = () => {
   }
   return (
     <>
+      {visible?<Alert message="Error" description="Empty value" type="error" closable afterClose={()=>setVisible(false)}/>:null}
      <AddTaskForm change={handlerChangeVariableForUpdateUseEffect}></AddTaskForm>
      <ToDoList taskList={taskList} remove={handlerRemoveTask} change={handlerChangedTask} updateTask={handlerUpdateTask}/>
     </>
