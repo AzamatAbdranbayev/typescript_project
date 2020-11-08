@@ -11,13 +11,13 @@ const withErrorHandler = (WrappedComponent,axios) => {
                 SetStatusLoader(true);
                 return request;
             },error=>{
-                throw new Error ("witherrorHandler ",error.message);
+                // throw new Error ("witherrorHandler ",error.message);
             })
             axios.interceptors.response.use(response=>{
                 SetStatusLoader(false);
                 return response;
             },error=>{
-                throw new Error ("witherrorHandler ",error.message);
+                // throw new Error ("witherrorHandler ",error.message);
             }) 
         },[])
         useEffect(()=>{

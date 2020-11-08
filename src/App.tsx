@@ -28,11 +28,13 @@ const App: React.FC = () => {
           response.data.id = taskId;
           return response.data;
         })
+       
       }))
     })
     .then(response=>{
-      setTaskList(response)
+      setTaskList(response);
     })
+    .catch(e=>console.log(e))
   },[variableForUpdateUseEffect])
 
   const handlerRemoveTask = (id:string)=> {
@@ -41,24 +43,25 @@ const App: React.FC = () => {
       url:`https://todo-ps-b0113.firebaseio.com/task/${id}.json`
     })
     .then(()=>{
-      handlerChangeVariableForUpdateUseEffect()
+      setTaskList([])
+      handlerChangeVariableForUpdateUseEffect();
     })
   }
   const handlerChangedTask = (event:React.ChangeEvent<HTMLTextAreaElement>,id:string) => {
-    setValueChangedTask(event.target.value)
-    const index = taskList.findIndex(elem=>elem.id === id)
+    setValueChangedTask(event.target.value);
+    const index = taskList.findIndex(elem=>elem.id === id);
     const newTask = {
       id:id,
       title:event.target.value,
       completed:false
     }
-    const taskListCopy = taskList
-    taskListCopy[index] = newTask
-    setTaskList(taskListCopy)
+    const taskListCopy = taskList;
+    taskListCopy[index] = newTask;
+    setTaskList(taskListCopy);
   }
   const handlerUpdateTask = (id:string)=>{
     if(valueChangedTask === "") {
-      setVisible(true)
+      setVisible(true);
       return
     }
     axios({
@@ -67,14 +70,14 @@ const App: React.FC = () => {
       data:taskList[taskList.findIndex(elem=>elem.id === id)]
     })
     .then(()=>{
-      handlerChangeVariableForUpdateUseEffect()
+      handlerChangeVariableForUpdateUseEffect();
     })
   }
   return (
     <>
       {visible?<Alert message="Error" description="Empty value" type="error" closable afterClose={()=>setVisible(false)}/>:null}
-     <AddTaskForm change={handlerChangeVariableForUpdateUseEffect}></AddTaskForm>
-     <ToDoList taskList={taskList} remove={handlerRemoveTask} change={handlerChangedTask} updateTask={handlerUpdateTask}/>
+      <AddTaskForm change={handlerChangeVariableForUpdateUseEffect}></AddTaskForm>
+      <ToDoList taskList={taskList} remove={handlerRemoveTask} change={handlerChangedTask} updateTask={handlerUpdateTask}/>
     </>
   )
 } 
