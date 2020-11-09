@@ -1,23 +1,20 @@
 import React, { useMemo, useState , useEffect} from "react";
 import Loader from "../../components/Loader/Loader"
+import axios from "axios";
 
-const withErrorHandler = (WrappedComponent,axios) => {
+function withLoaderHandler<T> (WrappedComponent:React.ComponentType) {
 
-    return props => {
-        const [statusLoader,SetStatusLoader] = useState(null);
+    return (props:T)=> {
+        const [statusLoader,SetStatusLoader] = useState<boolean>(false);
 
-        const intercep = useMemo(()=>{
+        const intercep:any = useMemo(()=>{
             axios.interceptors.request.use(request=>{
                 SetStatusLoader(true);
                 return request;
-            },error=>{
-                // throw new Error ("witherrorHandler ",error.message);
             })
             axios.interceptors.response.use(response=>{
                 SetStatusLoader(false);
                 return response;
-            },error=>{
-                // throw new Error ("witherrorHandler ",error.message);
             }) 
         },[])
         useEffect(()=>{
@@ -25,11 +22,11 @@ const withErrorHandler = (WrappedComponent,axios) => {
         },[intercep])
         return (
             <>
-                {statusLoader ?<Loader/>:null}
+                {statusLoader ? <Loader/> : null}
                 <WrappedComponent {...props}/>
             </>
         )
     }
 }
 
-export default withErrorHandler;
+export default withLoaderHandler;

@@ -2,7 +2,7 @@ import React, {useState } from "react";
 import axios from "axios";
 import "antd/dist/antd.css";
 import {Button,Input,Alert} from "antd";    
-import {Row,Col} from "react-flexbox-grid"
+import {Row,Col} from "react-flexbox-grid";
 import {SendOutlined} from "@ant-design/icons";
 const {TextArea} = Input;
 
@@ -22,9 +22,8 @@ const AddTaskForm: React.FC<AddTaskFormpProps> = ({change}) => {
                 method:"POST",
                 url:"https://todo-ps-b0113.firebaseio.com/task.json",
                 data:{
-                    id:"0",
+                    id:Date.now(),
                     title:taskValue,
-                    completed:false
                 }
             })
             .then(()=>{
