@@ -1,93 +1,100 @@
-import React,{useState,useEffect} from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import AddTaskForm from './components/AddTaskForm/AddTaskForm';
-import axios from "axios";
+import axios from 'axios';
 import ToDoList from './components/ToDoList/ToDoList';
 import withLoaderHandler from './hoc/withLoaderHandler/withLoaderHandler';
 import { Alert } from 'antd';
+import { Task } from './components/ToDoList/ToDoItem';
+import SubMenu from 'antd/lib/menu/SubMenu';
+
+const baseUrl = 'https://todo-ps-b0113.firebaseio.com/task';
+
 const App: React.FC = () => {
+  const [taskList, setTaskList] = useState<Task[]>([]);
+  const [error, showError] = useState<string | null>(null);
 
-  const [taskList,setTaskList] = useState<object []>([]);
-  const [variableForUpdateUseEffect,setVariableForUpdateUseEffect] = useState<number>(0);
-  const [valueChangedTask,setValueChangedTask] = useState<string>("");
-  const [visible,setVisible] = useState<boolean>(false);
-  const baseUrl = "https://todo-ps-b0113.firebaseio.com/task";
-  const handlerChangeVariableForUpdateUseEffect = () => {
-    setVariableForUpdateUseEffect(variableForUpdateUseEffect+1);
-  }
+  // const [, rerender] = useState(new Date());
+  // useEffect(() => {
+  //   StateManager.on('change', () => {
+  //     rerender(new Date());
+  //   })
+  // }, []);
 
-  useEffect(()=>{
+  function loadTasks() {
     axios({
-      method:"GET",
-      url:`${baseUrl}.json`
+      method: 'GET',
+      url: `${baseUrl}.json`,
     })
-    .then(response=>{
-      return Promise.all(Object.keys(response.data).map(taskId=>{
-        return axios({
-          method:"GET",
-          url:`${baseUrl}/${taskId}.json`
-        })
-        .then(response=>{
-          response.data.id = taskId;
-          return response.data;
-        })
-      }))
-    })
-    .then(response=>{
-      setTaskList(response);
-    })
-    .catch(e=>console.log(e))
-  },[variableForUpdateUseEffect])
+      .then((response) => {
+        return Promise.all(
+          Object.keys(response.data).map((taskId) => {
+            return axios({
+              method: 'GET',
+              url: `${baseUrl}/${taskId}.json`,
+            }).then((response) => {
+              response.data.id = taskId;
+              return response.data;
+            });
+          })
+        );
+      })
+      .then((response) => {
+        setTaskList(response);
+      })
+      .catch((e) => showError(e.message));
+  }
 
-  const handlerRemoveTask = (id:string)=> {
+  useEffect(() => {
+    loadTasks();
+  }, []);
+
+  const handlerRemoveTask = (id: string) => {
     axios({
-      method:"DELETE",
-      url:`${baseUrl}/${id}.json`
+      method: 'DELETE',
+      url: `${baseUrl}/${id}.json`,
     })
-    .then(()=>{
-      setTaskList([]);  
-      handlerChangeVariableForUpdateUseEffect();
-    })
-  }
+      .then(() => {
+        setTaskList([]);
+        loadTasks();
+      })
+      .catch((e) => {
+        showError(e.message);
+      });
+  };
 
-  const handlerChangedTask = (event:React.ChangeEvent<HTMLTextAreaElement>,id:string) => {
-    const newValue = event.currentTarget.value;
-    setValueChangedTask(newValue);
-  }
-
-  const handlerUpdateTask = (id:string)=>{
-    if(valueChangedTask === "") {
-      setVisible(true);
-      return
+  const handlerUpdateTask = (id: string, title: string) => {
+    if (!title) {
+      showError('Task text cannot be empty');
+      return;
     }
     axios({
-      method:"PUT",
-      url:`${baseUrl}/${id}.json`,
-      data:{id:id,title:valueChangedTask}
+      method: 'PUT',
+      url: `${baseUrl}/${id}.json`,
+      data: { id, title },
     })
-    .then(()=>{
-      handlerChangeVariableForUpdateUseEffect();
-    })
-  }
+      .then(() => {
+        loadTasks();
+      })
+      .catch((e) => {
+        showError(e.message);
+      });
+  };
+
   return (
     <>
-      {visible
-        ?
-        <Alert 
-          message = "Error" description = "Empty value" 
-          type = "error" closable afterClose = {()=>setVisible(false)}
+      {error ? (
+        <Alert
+          message="Error"
+          description={error}
+          type="error"
+          closable
+          afterClose={() => showError(null)}
         />
-        :
-        null
-      }
-      <AddTaskForm change = {handlerChangeVariableForUpdateUseEffect}></AddTaskForm>
-      <ToDoList 
-        taskList = {taskList} 
-        remove = {handlerRemoveTask} 
-        change = {handlerChangedTask} 
-        updateTask = {handlerUpdateTask}
-      />
+      ) : null}
+      <AddTaskForm change={loadTasks}></AddTaskForm>
+      <ToDoList taskList={taskList} remove={handlerRemoveTask} updateTask={handlerUpdateTask} />
     </>
-  )
-} 
+  );
+};
 
 export default withLoaderHandler(App);
