@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Input, Space, Typography } from 'antd';
 import { DeleteOutlined, SaveOutlined } from '@ant-design/icons';
-
+import {actions} from "../../store/taskStore"
 const { TextArea } = Input;
 const { Text } = Typography;
 
@@ -14,7 +14,7 @@ interface P {
   idx: number;
   task: Task;
   remove: (id: string) => void;
-  updateTask: (id: string, title: string) => void;
+  updateTask: (id: string) => void;
 }
 
 export function ToDoItem({ idx, task, updateTask, remove }: P) {
@@ -25,11 +25,11 @@ export function ToDoItem({ idx, task, updateTask, remove }: P) {
       <Space align="center">
         <Text mark>#{idx}</Text>
         <TextArea
-          onChange={(event) => setValueChangedTask(event.currentTarget.value)}
+          onChange={(event) => actions.changeTaskValue(event.currentTarget.value)}
           defaultValue={task.title}
         />
         <Button
-          onClick={() => updateTask(task.id, valueChangedTask)}
+          onClick={() => updateTask(task.id)}
           type="primary"
           icon={<SaveOutlined />}
         >

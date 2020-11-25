@@ -4,34 +4,37 @@ import 'antd/dist/antd.css';
 import { Button, Input, Alert } from 'antd';
 import { Row, Col } from 'react-flexbox-grid';
 import { SendOutlined } from '@ant-design/icons';
+import {actions,state} from "../../store/taskStore";
 const { TextArea } = Input;
 
 interface AddTaskFormpProps {
-  change(): void;
+
 }
-const AddTaskForm: React.FC<AddTaskFormpProps> = ({ change }) => {
+const AddTaskForm: React.FC<AddTaskFormpProps> = () => {
   const [taskValue, setTaskValue] = useState('');
   const [visible, setVisible] = useState(false);
 
   const handlerChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setTaskValue(event.target.value);
+    // setTaskValue(event.target.value);
+    actions.addTaskValue(event.target.value)
   };
   const handlerSubmitTaskValue = () => {
-    if (taskValue !== '') {
-      axios({
-        method: 'POST',
-        url: 'https://todo-ps-b0113.firebaseio.com/task.json',
-        data: {
-          id: Date.now(),
-          title: taskValue,
-        },
-      }).then(() => {
-        change();
-        setTaskValue('');
-      });
-    } else {
-      setVisible(true);
-    }
+    // if (taskValue !== '') {
+    //   axios({
+    //     method: 'POST',
+    //     url: 'https://todo-ps-b0113.firebaseio.com/task.json',
+    //     data: {
+    //       id: Date.now(),
+    //       title: taskValue,
+    //     },
+    //   }).then(() => {
+    //     change();
+    //     setTaskValue('');
+    //   });
+    // } else {
+    //   setVisible(true);
+    // }
+    actions.addTask()
   };
   return (
     <>
@@ -47,7 +50,7 @@ const AddTaskForm: React.FC<AddTaskFormpProps> = ({ change }) => {
       <Row middle="xs">
         <Col xs={6}>
           <TextArea
-            value={taskValue}
+            value={state.valueNewTask}
             onChange={handlerChange}
             placeholder="please entry the value"
           ></TextArea>
