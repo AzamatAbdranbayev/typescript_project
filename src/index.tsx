@@ -7,9 +7,12 @@ import {state,actions} from './store/taskStore';
 import {Provider} from 'mobx-react';
 
 ReactDOM.render(
-  <Provider state={state} actions={actions}>
-    <App/>
-  </Provider>,document.getElementById('root')
+  <React.StrictMode>
+    <Provider state={state} actions={actions}>
+      <App/>
+    </Provider>
+  </React.StrictMode>
+  ,document.getElementById('root')
 );
 
 // If you want to start measuring performance in your app, pass a function

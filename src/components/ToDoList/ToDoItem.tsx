@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { Button, Input, Space, Typography } from 'antd';
-import { DeleteOutlined, SaveOutlined } from '@ant-design/icons';
-import {actions} from "../../store/taskStore"
+import React from "react";
+import { Button, Input, Space, Typography } from "antd";
+import { DeleteOutlined, SaveOutlined } from "@ant-design/icons";
+import { actions } from "../../store/taskStore";
+
 const { TextArea } = Input;
 const { Text } = Typography;
 
@@ -17,15 +18,15 @@ interface P {
   updateTask: (id: string) => void;
 }
 
-export function ToDoItem({ idx, task, updateTask, remove }: P) {
-  const [valueChangedTask, setValueChangedTask] = useState(task.title);
-
+const ToDoItem = ({ idx, task, updateTask, remove }: P) => {
   return (
-    <div className="space-align-block" style={{ margin: '20px 0' }}>
+    <div className="space-align-block" style={{ margin: "20px 0" }}>
       <Space align="center">
         <Text mark>#{idx}</Text>
         <TextArea
-          onChange={(event) => actions.changeTaskValue(event.currentTarget.value)}
+          onChange={(event) =>
+            actions.changeTaskValue(event.currentTarget.value)
+          }
           defaultValue={task.title}
         />
         <Button
@@ -35,10 +36,16 @@ export function ToDoItem({ idx, task, updateTask, remove }: P) {
         >
           Update
         </Button>
-        <Button onClick={() => remove(task.id)} danger icon={<DeleteOutlined />}>
+        <Button
+          onClick={() => remove(task.id)}
+          danger
+          icon={<DeleteOutlined />}
+        >
           Delete
         </Button>
       </Space>
     </div>
   );
-}
+};
+
+export default ToDoItem;

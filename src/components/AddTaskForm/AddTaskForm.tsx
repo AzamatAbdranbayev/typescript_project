@@ -1,52 +1,23 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import 'antd/dist/antd.css';
-import { Button, Input, Alert } from 'antd';
-import { Row, Col } from 'react-flexbox-grid';
-import { SendOutlined } from '@ant-design/icons';
-import {actions,state} from "../../store/taskStore";
+import React from "react";
+import "antd/dist/antd.css";
+import { Button, Input } from "antd";
+import { Row, Col } from "react-flexbox-grid";
+import { SendOutlined } from "@ant-design/icons";
+import { actions, state } from "../../store/taskStore";
+import { observer } from "mobx-react";
 const { TextArea } = Input;
 
-interface AddTaskFormpProps {
 
-}
-const AddTaskForm: React.FC<AddTaskFormpProps> = () => {
-  const [taskValue, setTaskValue] = useState('');
-  const [visible, setVisible] = useState(false);
-
+const AddTaskForm: React.FC = observer(() => {
   const handlerChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    // setTaskValue(event.target.value);
-    actions.addTaskValue(event.target.value)
+    actions.addTaskValue(event.target.value);
   };
   const handlerSubmitTaskValue = () => {
-    // if (taskValue !== '') {
-    //   axios({
-    //     method: 'POST',
-    //     url: 'https://todo-ps-b0113.firebaseio.com/task.json',
-    //     data: {
-    //       id: Date.now(),
-    //       title: taskValue,
-    //     },
-    //   }).then(() => {
-    //     change();
-    //     setTaskValue('');
-    //   });
-    // } else {
-    //   setVisible(true);
-    // }
-    actions.addTask()
+    actions.addTask();
+    actions.addTaskValue("");
   };
   return (
     <>
-      {visible ? (
-        <Alert
-          message="Error"
-          description="Empty value"
-          type="error"
-          closable
-          afterClose={() => setVisible(false)}
-        />
-      ) : null}
       <Row middle="xs">
         <Col xs={6}>
           <TextArea
@@ -56,13 +27,18 @@ const AddTaskForm: React.FC<AddTaskFormpProps> = () => {
           ></TextArea>
         </Col>
         <Col xs={2}>
-          <Button onClick={handlerSubmitTaskValue} type="primary" ghost icon={<SendOutlined />}>
+          <Button
+            onClick={handlerSubmitTaskValue}
+            type="primary"
+            ghost
+            icon={<SendOutlined />}
+          >
             Add
           </Button>
         </Col>
       </Row>
     </>
   );
-};
+});
 
 export default AddTaskForm;

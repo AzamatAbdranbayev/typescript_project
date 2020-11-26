@@ -1,6 +1,7 @@
-import React from 'react';
-import 'antd/dist/antd.css';
-import { Task, ToDoItem } from './ToDoItem';
+import React from "react";
+import "antd/dist/antd.css";
+import { Task } from "./ToDoItem";
+import ToDoItem from "./ToDoItem";
 
 interface TodoListProps {
   taskList: Task[];
@@ -8,10 +9,12 @@ interface TodoListProps {
   updateTask: (id: string) => void;
 }
 
-const ToDoList: React.FC<TodoListProps> = ({ taskList, remove, updateTask }) => {
-  console.log("tasklist in todolist component",taskList)
+const ToDoList: React.FC<TodoListProps> = ({
+  taskList,
+  remove,
+  updateTask,
+}) => {
   return (
-    
     <div className="space-align-container">
       {taskList.map((task, index) => (
         <ToDoItem
