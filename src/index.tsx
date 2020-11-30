@@ -7,11 +7,11 @@ import {state,actions} from './store/taskStore';
 import {Provider} from 'mobx-react';
 
 ReactDOM.render(
-  <React.StrictMode>
+
     <Provider state={state} actions={actions}>
       <App/>
     </Provider>
-  </React.StrictMode>
+
   ,document.getElementById('root')
 );
 

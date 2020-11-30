@@ -29,23 +29,23 @@ export const actions = {
           return task;
         });
       })
-      .then((response) => {
+      .then(a((response: object []) => {
         state.tasks = response;
         state.loaderStatus = false;
-      })
-      .catch((e) => {
+      }))
+      .catch(a((e:any) => {
         state.error = e.message;
         state.loaderStatus = false;
         if (state.tasks.length === 1) {
           state.tasks = [];
         }
-      });
+      }));
   }),
   deleteTask: a((id: string) => {
     axios
       .delete(`/task/${id}.json`)
       .then(() => actions.getTasks())
-      .catch((e) => (state.error = e.message));
+      .catch(a((e:any) => (state.error = e.message)));
   }),
   addTask: a(() => {
     if (state.valueNewTask === "") state.error = "empty value";
@@ -57,7 +57,7 @@ export const actions = {
       axios
         .post(`/task.json`, newTask)
         .then(() => actions.getTasks())
-        .catch((e) => (state.error = e.message));
+        .catch(a((e:any) => (state.error = e.message)));
     }
   }),
   updateTask: a((id: string) => {
@@ -69,7 +69,7 @@ export const actions = {
           title: state.valueCurrentTask,
         })
         .then(() => actions.getTasks())
-        .catch((e) => (state.error = e.message));
+        .catch(a((e:any) => (state.error = e.message)));
     }
   }),
   addTaskValue: a((value: string) => {
